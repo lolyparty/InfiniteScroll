@@ -1,48 +1,42 @@
 import { useEffect, useState } from 'react';
 import './App.css';
-import { createClient } from 'pexels';
+import axios from 'axios';
+import {useQuery} from 'react-query'
 
 function App() {
 
-  useEffect(() => {
-    window.process = {
-      ...window.process,
-    };
-  }, []);
-
   const [imageData, setDetails] = useState([]);
-  //'api_key=88224c51-36bd-4722-87f8-ad99da5c3ff5' 
-  // api-key - 563492ad6f917000010000015c3f313de78f4e3f9cc9b6bb9887ed8c 
 
-  // useEffect(()=>{
-    const getData = async ()=>{
-    //     const dataDetails = await axios.get('https://fierce-escarpment-09151.herokuapp.com/api.pexels.com/v1/search?query=dog')
-    //     const DataImg = dataDetails
-    //     setDetails(DataImg.data.photos)
-    //     console.log(imageData)
-    // }
+  //axios instance
+  const instance = axios.create({baseURL:'https://api.pexels.com/v1/'})
 
-    const client = createClient('563492ad6f917000010000015c3f313de78f4e3f9cc9b6bb9887ed8c')
-    const query = 'dog'
-    client.photos.search({ query, per_page: 5 }).then(photos => setDetails(prev => [...prev, photos]));
-    console.log(imageData)
-    
-
+  const getPhotos = async ()=>{
+    try{
+      const photos = await instance.get('/search?query=nature?page=1&per_page=10',{
+      headers:{
+        Accept: "application/json",
+      Authorization:process.env.REACT_APP_INFINITESCROLL
+      }
+    })
+    return photos
+    } 
+    catch(err){
+      console.log('error fetching')
     }
+  }
 
-    getData();
-  // },[])
+  const {data, isLoading, isError, isSuccess} = useQuery('Photos', getPhotos)
+  
 
 
   return (
-    <div className="App">
-      {imageData.length > 0 ? imageData.map((e, index)=>
-         <div key={index} style={{'display':'flex', 'justifyContent':'center', 'alignItems':'center'}}>
-           <img style={{'height':'400px', 'width':'400px', 'margin':'5px'}} alt="cat" src={e.url}/>
-         </div>
-      ) : null}
+    <div>
+      {isLoading && <div>Loading....</div>}
+      {isSuccess && <div className="container">{data.data.photos.map(e=> <div className="img_container" key={e.id}><img className="img_container" alt="" src={e.src.medium}/></div>)}</div>}
+      {isError && <div>Error...</div>}
     </div>
-  );
-};
+    );
+}
+
 
 export default App;
