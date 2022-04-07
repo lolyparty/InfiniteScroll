@@ -1,4 +1,4 @@
-import { Fragment, useEffect, useState } from 'react';
+import { Fragment } from 'react';
 import './App.css';
 import axios from 'axios';
 import {useInfiniteQuery} from 'react-query'
@@ -18,7 +18,6 @@ function App() {
       Authorization:process.env.REACT_APP_INFINITESCROLL
       }
     })
-    // console.log(photos)
     return photos
     } 
     catch(err){
@@ -29,6 +28,24 @@ function App() {
   const nextPages = ()=>{
     fetchNextPage()
   }
+
+  //intersection observer
+ const inter = () => {
+  var observer
+  
+  let options = {
+    root:null,
+    rootMargin:'0px',
+    threshold:0.5
+  }
+
+  observer = new IntersectionObserver(intersecionAnim, options)
+
+  var intersecionAnim = (entries, observer)=>{console.log(entries)}
+
+  
+ }
+  
 
   // react query
   const {fetchNextPage,
@@ -46,12 +63,13 @@ function App() {
   })
   
   return (
-    <div style={{display:'flex', flexDirection:'column'}}>
+    <div style={{display:'flex', flexDirection:'column', alignItems:'center'}}>
       {isLoading && <div>Loading....</div>}
-      {isSuccess && result.data.pages.map((page, id)=> <Fragment key={id}>
-        {result.data.pages[id].data.photos.map((image, id)=><img style={{width:'300px', height:'300px', margin:'10px'}} src={image.src.medium} key={id} alt={image.alt}/>)}
-        </Fragment >)
-        }
+      {isSuccess && result.data.pages
+                  .map((page, id)=> <Fragment key={id}>
+                      {result.data.pages[id].data.photos.map((image, id)=><img className='images' style={{width:'400px', height:'400px', margin:'10px'}} src={image.src.large} key={id} alt={image.alt}/>)}
+                      </Fragment >)
+      }
       {isError && <div>Error...</div>}
 
       {/* loading more pictures */ }
@@ -63,6 +81,3 @@ function App() {
 
 
 export default App;
-
-
-//pages[0].data.total_results/pages[0].data.per_page
