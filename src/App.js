@@ -25,28 +25,31 @@ function App() {
     }
   }
 
+
+  //get next page
   const nextPages = ()=>{
+    
     fetchNextPage()
   }
 
   //intersection observer
- const inter = () => {
-  var observer
-  
-  let options = {
-    root:null,
-    rootMargin:'0px',
-    threshold:0.5
+  const intersecionAnim = (entries, observer)=>entries.forEach((entry)=>{console.log(entry,'Here 50%')})
+  let paragraph = document.querySelector('#last')
+
+  const inter = () => {
+    let observer
+    
+    let options = {
+      root: document.querySelector('.container'),
+      rootMargin:'0px',
+      threshold:0.5
+    }
+
+    observer = new IntersectionObserver(intersecionAnim, options)
+    observer.observe(paragraph)
+    
   }
-
-  observer = new IntersectionObserver(intersecionAnim, options)
-
-  var intersecionAnim = (entries, observer)=>{console.log(entries)}
-
   
- }
-  
-
   // react query
   const {fetchNextPage,
     fetchPreviousPage,
@@ -62,18 +65,30 @@ function App() {
     getNextPageParam: (lastPage, pages )=> pages.length < 11 ? pages.length + 1 : undefined,
   })
   
+  
   return (
-    <div style={{display:'flex', flexDirection:'column', alignItems:'center'}}>
+    <div style={{display:'flex', flexDirection:'column', alignItems:'center'}} className="container">
+      
+      {/* fetching pictures */}
       {isLoading && <div>Loading....</div>}
-      {isSuccess && result.data.pages
-                  .map((page, id)=> <Fragment key={id}>
-                      {result.data.pages[id].data.photos.map((image, id)=><img className='images' style={{width:'400px', height:'400px', margin:'10px'}} src={image.src.large} key={id} alt={image.alt}/>)}
-                      </Fragment >)
+
+      {/* Successful fetching of pictures */}
+      {isSuccess && result.data.pages.length >= 1 ? result.data.pages.map((page, id)=> <Fragment key={id}>
+                      {page.data.photos && page.data.photos.map((image, id)=>{
+                        return page.data.photos.length - 1 === id ? <img className='images' style={{width:'400px', height:'400px', margin:'10px'}} id='last' src={image.src.large} key={id} alt={image.alt}/> : <img className='images' style={{width:'400px', height:'400px', margin:'10px'}} id='last' src={image.src.large} key={id} alt={image.alt}/>
+                      })
+                      }
+                      {page.data.photos && result.data.pages.length >= 1 ? inter() : null}
+                      </Fragment >) : null
       }
+
+      {/* Refecthing another page */}
+      {isFetchingNextPage && <p>fetching....</p>}
+
+      {/* if Error occurs while fetching */}
       {isError && <div>Error...</div>}
 
       {/* loading more pictures */ }
-      {isFetchingNextPage && <p>fetching....</p>}
       <button onClick={nextPages} >next</button>
     </div>
     );
