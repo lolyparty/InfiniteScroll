@@ -78,7 +78,7 @@ function App() {
                         return page.data.photos.length - 1 === id ? <img className='images' style={{width:'400px', height:'400px', margin:'10px'}} id='last' src={image.src.large} key={id} alt={image.alt}/> : <img className='images' style={{width:'400px', height:'400px', margin:'10px'}} id='last' src={image.src.large} key={id} alt={image.alt}/>
                       })
                       }
-                      {page.data.photos && result.data.pages.length >= 1 ? inter() : null}
+                      {/* {page.data.photos && result.data.pages.length >= 1 ? inter() : null} */}
                       </Fragment >) : null
       }
 
