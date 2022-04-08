@@ -21,15 +21,7 @@ function App() {
     catch(err){
       console.log('error fetching')
     }
-  }
-
-
-  //get next page
-  const nextPages = ()=>{
-    
-    fetchNextPage()
-  }
- 
+  } 
 
   //intersection observer
     const intersecionAnim = (entries, observer)=>entries.forEach((entry)=>{
@@ -56,7 +48,7 @@ function App() {
     }
 
     var observer = new MutationObserver(function() {
-      if (document.contains(document.querySelector('#last'))) {
+      if (document.contains(document.querySelector('.images'))) {
            console.log("It's in the DOM!");
            inter()
            observer.disconnect();
@@ -90,9 +82,8 @@ function App() {
 
       {/* Successful fetching of pictures */}
       {isSuccess && result.data.pages.length >= 1 ? result.data.pages.map((page, id)=> <Fragment key={id}>
-                      {page.data.photos && page.data.photos.map((image, id)=>{
-                        return page.data.photos.length - 1 === id ? <img className='images' style={{width:'400px', height:'400px', margin:'10px'}} id='last' src={image.src.large} key={id} alt={image.alt}/> : <img className='images' style={{width:'400px', height:'400px', margin:'10px'}} src={image.src.large} key={id} alt={image.alt}/>
-                      })
+                      {page.data.photos && page.data.photos.map((image, id)=><img className='images' style={{width:'400px', height:'400px', margin:'10px'}} src={image.src.large} key={id} alt={image.alt}/>
+                      )
                       }
                       {console.log(`page ${id}`)}
                       </Fragment >) : null
