@@ -1,11 +1,9 @@
-import { Fragment } from 'react';
+import { Fragment, useEffect, useState } from 'react';
 import './App.css';
 import axios from 'axios';
 import {useInfiniteQuery} from 'react-query'
 
 function App() {
-
-
   //axios instance
   const instance = axios.create({baseURL:'https://api.pexels.com/v1/'})
 
@@ -31,24 +29,42 @@ function App() {
     
     fetchNextPage()
   }
+ 
 
   //intersection observer
-  const intersecionAnim = (entries, observer)=>entries.forEach((entry)=>{console.log(entry,'Here 50%')})
-  let paragraph = document.querySelector('#last')
-
-  const inter = () => {
-    let observer
+    const intersecionAnim = (entries, observer)=>entries.forEach((entry)=>{
+      console.log(entry)
+      if(entry.isIntersecting && entry.intersectionRatio >= 0.05 && entry.intersectionRatio < 1){
+        fetchNextPage()
+      }
+    })
+    
+    
+    const inter =()=>{
+      let paragraph = document.querySelector('.container').lastChild.previousSibling
+    // paragraph = paragraph[paragraph.length - 1] 
+      let observer
     
     let options = {
-      root: document.querySelector('.container'),
+      root: null,
       rootMargin:'0px',
-      threshold:0.5
+      threshold:0.05
     }
 
     observer = new IntersectionObserver(intersecionAnim, options)
     observer.observe(paragraph)
-    
-  }
+    }
+
+    var observer = new MutationObserver(function() {
+      if (document.contains(document.querySelector('#last'))) {
+           console.log("It's in the DOM!");
+           inter()
+           observer.disconnect();
+       }
+   });
+   
+   observer.observe(document, {attributes: false, childList: true, characterData: false, subtree:true});
+  
   
   // react query
   const {fetchNextPage,
@@ -68,28 +84,29 @@ function App() {
   
   return (
     <div style={{display:'flex', flexDirection:'column', alignItems:'center'}} className="container">
-      
+      {/* <p id="last" style={{width:'400px', height:'400px'}}></p> */}
       {/* fetching pictures */}
       {isLoading && <div>Loading....</div>}
 
       {/* Successful fetching of pictures */}
       {isSuccess && result.data.pages.length >= 1 ? result.data.pages.map((page, id)=> <Fragment key={id}>
                       {page.data.photos && page.data.photos.map((image, id)=>{
-                        return page.data.photos.length - 1 === id ? <img className='images' style={{width:'400px', height:'400px', margin:'10px'}} id='last' src={image.src.large} key={id} alt={image.alt}/> : <img className='images' style={{width:'400px', height:'400px', margin:'10px'}} id='last' src={image.src.large} key={id} alt={image.alt}/>
+                        return page.data.photos.length - 1 === id ? <img className='images' style={{width:'400px', height:'400px', margin:'10px'}} id='last' src={image.src.large} key={id} alt={image.alt}/> : <img className='images' style={{width:'400px', height:'400px', margin:'10px'}} src={image.src.large} key={id} alt={image.alt}/>
                       })
                       }
-                      {/* {page.data.photos && result.data.pages.length >= 1 ? inter() : null} */}
+                      {console.log(`page ${id}`)}
                       </Fragment >) : null
       }
+      
 
       {/* Refecthing another page */}
       {isFetchingNextPage && <p>fetching....</p>}
 
       {/* if Error occurs while fetching */}
-      {isError && <div>Error...</div>}
+      {isError && <p>Error...</p>}
 
       {/* loading more pictures */ }
-      <button onClick={nextPages} >next</button>
+      {/* <button onClick={nextPages} >next</button> */}
     </div>
     );
 }
