@@ -9,17 +9,19 @@ function App() {
 
   //Get photos
   const getPhotos = async ({pageParam = 1})=>{
-    try{
-      const photos = await instance.get(`/curated?page=${pageParam}&per_page=10`,{
-      headers:{
-        Accept: "application/json",
-      Authorization:process.env.REACT_APP_INFINITESCROLL
+    if(pageParam){
+      try{
+        const photos = await instance.get(`/curated?page=${pageParam}&per_page=10`,{
+        headers:{
+          Accept: "application/json",
+        Authorization:process.env.REACT_APP_INFINITESCROLL
+        }
+      })
+      return photos
+      } 
+      catch(err){
+        console.log('error fetching')
       }
-    })
-    return photos
-    } 
-    catch(err){
-      console.log('error fetching')
     }
   } 
 
@@ -70,7 +72,10 @@ function App() {
     isError,
     ...result
   } = useInfiniteQuery('Photos', getPhotos, {
-    getNextPageParam: (lastPage, pages )=> pages.length < 11 ? pages.length + 1 : undefined,
+    getNextPageParam: (lastPage, pages )=> pages.length < 5 ? pages.length + 1 : undefined,
+    refetchOnWindowFocus: false,
+    retry:false,
+    cacheTime:1000
   })
   
   
@@ -92,6 +97,7 @@ function App() {
 
       {/* Refecthing another page */}
       {isFetchingNextPage && <p>fetching....</p>}
+      {hasNextPage ? 'Loading new' : 'End'}
 
       {/* if Error occurs while fetching */}
       {isError && <p>Error...</p>}
