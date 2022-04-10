@@ -22,8 +22,28 @@ function App() {
       catch(err){
         console.log('error fetching')
       }
+    } else{
+      return
     }
   } 
+
+   // react query
+   const {fetchNextPage,
+    fetchPreviousPage,
+    hasNextPage,
+    hasPreviousPage,
+    isFetchingNextPage,
+    isFetchingPreviousPage,
+    isLoading,
+    isSuccess,
+    isError,
+    ...result
+  } = useInfiniteQuery('Photos', getPhotos, {
+    getNextPageParam: (lastPage, pages )=> pages.length < 5 ? pages.length + 1 : undefined,
+    refetchOnWindowFocus: false,
+    retry:false,
+    cacheTime:1000
+  })
 
   //intersection observer
     const intersecionAnim = (entries, observer)=>entries.forEach((entry)=>{
@@ -47,6 +67,7 @@ function App() {
 
     observer = new IntersectionObserver(intersecionAnim, options)
     observer.observe(paragraph)
+    if(!hasNextPage)observer.disconnect() 
     }
 
     var observer = new MutationObserver(function() {
@@ -60,50 +81,24 @@ function App() {
    observer.observe(document, {attributes: false, childList: true, characterData: false, subtree:true});
   
   
-  // react query
-  const {fetchNextPage,
-    fetchPreviousPage,
-    hasNextPage,
-    hasPreviousPage,
-    isFetchingNextPage,
-    isFetchingPreviousPage,
-    isLoading,
-    isSuccess,
-    isError,
-    ...result
-  } = useInfiniteQuery('Photos', getPhotos, {
-    getNextPageParam: (lastPage, pages )=> pages.length < 5 ? pages.length + 1 : undefined,
-    refetchOnWindowFocus: false,
-    retry:false,
-    cacheTime:1000
-  })
-  
-  
   return (
     <div style={{display:'flex', flexDirection:'column', alignItems:'center'}} className="container">
-      {/* <p id="last" style={{width:'400px', height:'400px'}}></p> */}
-      {/* fetching pictures */}
       {isLoading && <div>Loading....</div>}
+      {console.log(hasNextPage)}
 
       {/* Successful fetching of pictures */}
       {isSuccess && result.data.pages.length >= 1 ? result.data.pages.map((page, id)=> <Fragment key={id}>
                       {page.data.photos && page.data.photos.map((image, id)=><img className='images' style={{width:'400px', height:'400px', margin:'10px'}} src={image.src.large} key={id} alt={image.alt}/>
                       )
                       }
-                      {/* {console.log(`page ${id}`)} */}
                       </Fragment >) : null
       }
-      
 
       {/* Refecthing another page */}
       {isFetchingNextPage && <p>fetching....</p>}
-      {hasNextPage ? 'Loading new' : 'End'}
 
       {/* if Error occurs while fetching */}
-      {isError && <p>Error...</p>}
-
-      {/* loading more pictures */ }
-      {/* <button onClick={nextPages} >next</button> */}
+      {isError && <p>Error...</p>}      
     </div>
     );
 }
