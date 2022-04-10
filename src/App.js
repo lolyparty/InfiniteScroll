@@ -2,6 +2,7 @@ import { Fragment, useEffect, useState } from 'react';
 import './App.css';
 import axios from 'axios';
 import {useInfiniteQuery} from 'react-query'
+import FastAverageColor from 'fast-average-color'
 
 function App() {
   //axios instance
@@ -42,8 +43,18 @@ function App() {
     getNextPageParam: (lastPage, pages )=> pages.length < 5 ? pages.length + 1 : undefined,
     refetchOnWindowFocus: false,
     retry:false,
-    cacheTime:1000
+    cacheTime:100
   })
+
+  //Average color
+  const getDominantColor = ()=>{
+    const fac = new FastAverageColor()
+    fac.getColorAsync(`https://images.pexels.com/photos/2853192/pexels-photo-2853192.jpeg?auto=compress&cs=tinysrgb&h=650&w=940`, { width : 100, height: 100},{algorithm:'dominant'})
+    .then((data)=>{
+      document.querySelector('.container').style.background = data.hex
+    })
+    .catch((error)=>console.log(error))
+  }
 
   //intersection observer
     const intersecionAnim = (entries, observer)=>entries.forEach((entry)=>{
@@ -74,6 +85,8 @@ function App() {
       if (document.contains(document.querySelector('.images'))) {
           //  console.log("It's in the DOM!");
            inter()
+           getDominantColor()
+          //  document.querySelector('.container').style.background = getDominantColor()
            observer.disconnect();
        }
    });
@@ -82,9 +95,8 @@ function App() {
   
   
   return (
-    <div style={{display:'flex', flexDirection:'column', alignItems:'center'}} className="container">
+    <div className="container">
       {isLoading && <div>Loading....</div>}
-      {console.log(hasNextPage)}
 
       {/* Successful fetching of pictures */}
       {isSuccess && result.data.pages.length >= 1 ? result.data.pages.map((page, id)=> <Fragment key={id}>
