@@ -27,7 +27,7 @@ function App() {
 
   //intersection observer
     const intersecionAnim = (entries, observer)=>entries.forEach((entry)=>{
-      console.log(entry)
+      // console.log(entry)
       if(entry.isIntersecting && entry.intersectionRatio >= 0.05 && entry.intersectionRatio < 1){
         fetchNextPage()
       }
@@ -51,7 +51,7 @@ function App() {
 
     var observer = new MutationObserver(function() {
       if (document.contains(document.querySelector('.images'))) {
-           console.log("It's in the DOM!");
+          //  console.log("It's in the DOM!");
            inter()
            observer.disconnect();
        }
@@ -90,7 +90,7 @@ function App() {
                       {page.data.photos && page.data.photos.map((image, id)=><img className='images' style={{width:'400px', height:'400px', margin:'10px'}} src={image.src.large} key={id} alt={image.alt}/>
                       )
                       }
-                      {console.log(`page ${id}`)}
+                      {/* {console.log(`page ${id}`)} */}
                       </Fragment >) : null
       }
       
