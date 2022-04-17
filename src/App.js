@@ -1,10 +1,10 @@
 import { Fragment, useEffect, useState } from 'react';
 import './App.css';
 import axios from 'axios';
-import {useInfiniteQuery} from 'react-query'
-import FastAverageColor from 'fast-average-color'
-import {fetchNextPageFunction} from './fetchPage'
-import {changeColorOnScroll} from './changeColor'
+import {useInfiniteQuery} from 'react-query';
+import FastAverageColor from 'fast-average-color';
+import {fetchNextPageFunction} from './fetchPage';
+import {changeColorOnScroll} from './changeColor';
 
 function App() {
 
@@ -83,22 +83,26 @@ function App() {
       if (document.contains(document.querySelector('.images'))) {
         fetchNextPageFunction(fetchNextPage, hasNextPage)
         changeColorOnScroll(getDominantColor, isSuccess)
+        
           // if(!hasNextPage)observer.disconnect() 
        }
    });
    
    observer.observe(document, {attributes: false, childList: true, characterData: false, subtree:true})
+
+
   
+
   
   return (
     <div className="container">
+      <div className='overlay'></div>
       {isLoading && <div>Loading....</div>}
 
       {/* Successful fetching of pictures */}
      {isSuccess && result.data.pages.length >= 1 ? result.data.pages.map((page, id)=> <Fragment key={id}> 
                       {page.data.photos && page.data.photos.map((image, id)=><img className='images' style={{width:'400px', height:'550px', margin:'10px'}} src={image.src.large} key={id} alt={image.alt} crossOrigin="anonymous"/>
-                      )
-                      }{getDominantColor()}
+                      )}
                   </Fragment >) : null
       }
 

@@ -1,20 +1,32 @@
+/* @import url(locomotive-scroll.css); */
+
 *{
     padding:0;
     margin:0;
     box-sizing: border-box;
 }
+
 .container{
+    position: relative;
     width:100%;
     display: flex;
     flex-direction: column;
     align-items: center;
-    margin-top:20px;
     margin-bottom:10px;
-    transition: background-color 0.5s ease-in-out;
+    transition: background-color 0.3s ease-in-out;
 }
 
-.img_container{
-    margin:10px;
-    height:500px;
-    width:500px;
+.images{
+    z-index: 99999;
+}
+
+.overlay{
+    position: absolute;
+    top:0%;
+    left:0;
+    width:100%;
+    height:100%;
+    background-color: rgba(221, 221, 221, 0.1);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur( 5px );
 }
