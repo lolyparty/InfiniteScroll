@@ -8,14 +8,6 @@ import {changeColorOnScroll} from './changeColor'
 
 function App() {
 
-  //563492ad6f917000010000015c3f313de78f4e3f9cc9b6bb9887ed8c
-
-  //563492ad6f9170000100000170b790128db540ec8062c324b8b86d1c
-
-  //563492ad6f917000010000013ce1306a719d42f9818fc5832f8a351a
-
-  //563492ad6f91700001000001d08c0d8c97e04764b89190d4bdd65c98
-
   const [imageHex, setImageHex] = useState([])  
 
   useEffect(()=>{
