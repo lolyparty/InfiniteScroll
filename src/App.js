@@ -3,8 +3,32 @@ import './App.css';
 import axios from 'axios';
 import {useInfiniteQuery} from 'react-query'
 import FastAverageColor from 'fast-average-color'
+import {fetchNextPageFunction} from './fetchPage'
+import {changeColorOnScroll} from './changeColor'
 
 function App() {
+
+  //563492ad6f917000010000015c3f313de78f4e3f9cc9b6bb9887ed8c
+
+  //563492ad6f9170000100000170b790128db540ec8062c324b8b86d1c
+
+  //563492ad6f917000010000013ce1306a719d42f9818fc5832f8a351a
+
+  //563492ad6f91700001000001d08c0d8c97e04764b89190d4bdd65c98
+
+  const [imageHex, setImageHex] = useState([])  
+
+  useEffect(()=>{
+    const colorChange =() => {
+      //  if(changeColor){
+         document.querySelector('.container').style.background = imageHex[imageHex.length - 1]
+        // }
+    }
+    colorChange()
+    // getColor()
+  },[imageHex])
+
+
   //axios instance
   const instance = axios.create({baseURL:'https://api.pexels.com/v1/'})
 
@@ -12,7 +36,7 @@ function App() {
   const getPhotos = async ({pageParam = 1})=>{
     if(pageParam){
       try{
-        const photos = await instance.get(`/curated?page=${pageParam}&per_page=10`,{
+        const photos = await instance.get(`/curated?page=${pageParam}&per_page=5`,{
         headers:{
           Accept: "application/json",
         Authorization:process.env.REACT_APP_INFINITESCROLL
@@ -46,52 +70,32 @@ function App() {
     cacheTime:100
   })
 
-  //Average color
-  const getDominantColor = ()=>{
-    const fac = new FastAverageColor()
-    fac.getColorAsync(`https://images.pexels.com/photos/2853192/pexels-photo-2853192.jpeg?auto=compress&cs=tinysrgb&h=650&w=940`, { width : 100, height: 100},{algorithm:'dominant'})
-    .then((data)=>{
-      document.querySelector('.container').style.background = data.hex
-    })
-    .catch((error)=>console.log(error))
-  }
 
-  //intersection observer
-    const intersecionAnim = (entries, observer)=>entries.forEach((entry)=>{
-      // console.log(entry)
-      if(entry.isIntersecting && entry.intersectionRatio >= 0.05 && entry.intersectionRatio < 1){
-        fetchNextPage()
+
+
+    //color change
+     //Average color & get dominant color intersection observer
+     const getDominantColor = (imageUrl)=>{
+      if(imageUrl){
+        const fac = new FastAverageColor()
+      fac.getColorAsync(`${imageUrl}`, { width : 50, height: 50},{algorithm:'dominant'})
+      .then((data)=>{
+        setImageHex(prev=>[...prev, data.hex])
+      })
+      .catch((error)=>console.log(error))
       }
-    })
-    
-    
-    const inter =()=>{
-      let paragraph = document.querySelector('.container').lastChild.previousSibling
-    // paragraph = paragraph[paragraph.length - 1] 
-      let observer
-    
-    let options = {
-      root: null,
-      rootMargin:'0px',
-      threshold:0.05
     }
 
-    observer = new IntersectionObserver(intersecionAnim, options)
-    observer.observe(paragraph)
-    if(!hasNextPage)observer.disconnect() 
-    }
-
+    //mutation observer
     var observer = new MutationObserver(function() {
       if (document.contains(document.querySelector('.images'))) {
-          //  console.log("It's in the DOM!");
-           inter()
-           getDominantColor()
-          //  document.querySelector('.container').style.background = getDominantColor()
-           observer.disconnect();
+        fetchNextPageFunction(fetchNextPage, hasNextPage)
+        changeColorOnScroll(getDominantColor, isSuccess)
+          // if(!hasNextPage)observer.disconnect() 
        }
    });
    
-   observer.observe(document, {attributes: false, childList: true, characterData: false, subtree:true});
+   observer.observe(document, {attributes: false, childList: true, characterData: false, subtree:true})
   
   
   return (
@@ -99,11 +103,11 @@ function App() {
       {isLoading && <div>Loading....</div>}
 
       {/* Successful fetching of pictures */}
-      {isSuccess && result.data.pages.length >= 1 ? result.data.pages.map((page, id)=> <Fragment key={id}>
-                      {page.data.photos && page.data.photos.map((image, id)=><img className='images' style={{width:'400px', height:'400px', margin:'10px'}} src={image.src.large} key={id} alt={image.alt}/>
+     {isSuccess && result.data.pages.length >= 1 ? result.data.pages.map((page, id)=> <Fragment key={id}> 
+                      {page.data.photos && page.data.photos.map((image, id)=><img className='images' style={{width:'400px', height:'550px', margin:'10px'}} src={image.src.large} key={id} alt={image.alt} crossOrigin="anonymous"/>
                       )
-                      }
-                      </Fragment >) : null
+                      }{getDominantColor()}
+                  </Fragment >) : null
       }
 
       {/* Refecthing another page */}
