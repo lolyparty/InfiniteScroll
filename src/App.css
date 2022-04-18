@@ -14,7 +14,7 @@
     align-items: center;
     margin-bottom:10px;
     transition: background-color 0.3s ease-in-out;
-    padding:10px;
+    padding:20px;
 }
 
 .status{
@@ -23,6 +23,9 @@
 
 .images{
     z-index: 1;
+    width:400px; 
+    height:550px; 
+    margin:15px;
 }
 
 .overlay{
@@ -48,7 +51,7 @@
 .loader{
     width:15px;
     height:15px;
-    background: rgb(17, 17, 17);
+    background: rgb(54, 54, 54);
     border-radius: 50%;
 }
 
@@ -105,5 +108,17 @@
     }
     100%{
         transform: translateY(-10px);
+    }
+}
+
+@media screen and (max-width:450px){
+    .images{
+        width:330px;
+    }
+}
+
+@media screen and (min-height:950px){
+    .images{
+        height:850px;
     }
 }

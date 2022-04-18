@@ -17,7 +17,6 @@ function App() {
   useEffect(()=>{
     const colorChange =() => {
       //  if(changeColor){
-        console.log(imageHex)
          document.querySelector('.container').style.background = imageHex[imageHex.length - 1]
         // }
     }
@@ -101,7 +100,7 @@ function App() {
 
         {/* Successful fetching of pictures */}
       {isSuccess && result.data.pages.length >= 1 ? result.data.pages.map((page, id)=> <Fragment key={id}> 
-                        {page.data.photos && page.data.photos.map((image, id)=><img className='images' style={{width:'400px', height:'550px', margin:'10px'}} src={image.src.large} key={id} alt={image.alt} crossOrigin="anonymous"/>
+                        {page.data.photos && page.data.photos.map((image, id)=><img className='images' src={image.src.large} key={id} alt={image.alt} crossOrigin="anonymous"/>
                         )}
                     </Fragment >) : null
         }
