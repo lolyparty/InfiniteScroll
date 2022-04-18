@@ -5,6 +5,7 @@ import {useInfiniteQuery} from 'react-query';
 import FastAverageColor from 'fast-average-color';
 import {fetchNextPageFunction} from './fetchPage';
 import {changeColorOnScroll} from './changeColor';
+import {Loading} from './loading'
 
 function App() {
 
@@ -93,23 +94,26 @@ function App() {
    observer.observe(document, {attributes: false, childList: true, characterData: false, subtree:true})
   
   return (
-    <div className="container">
-      <div className='overlay'></div>
-      {isLoading && <div className="status">Loading....</div>}
+    <>
+      {isLoading && <Loading />}
+      <div className="container">
+        <div className='overlay'></div>
 
-      {/* Successful fetching of pictures */}
-     {isSuccess && result.data.pages.length >= 1 ? result.data.pages.map((page, id)=> <Fragment key={id}> 
-                      {page.data.photos && page.data.photos.map((image, id)=><img className='images' style={{width:'400px', height:'550px', margin:'10px'}} src={image.src.large} key={id} alt={image.alt} crossOrigin="anonymous"/>
-                      )}
-                  </Fragment >) : null
-      }
+        {/* Successful fetching of pictures */}
+      {isSuccess && result.data.pages.length >= 1 ? result.data.pages.map((page, id)=> <Fragment key={id}> 
+                        {page.data.photos && page.data.photos.map((image, id)=><img className='images' style={{width:'400px', height:'550px', margin:'10px'}} src={image.src.large} key={id} alt={image.alt} crossOrigin="anonymous"/>
+                        )}
+                    </Fragment >) : null
+        }
 
+        
+
+        {/* if Error occurs while fetching */}
+        {isError && <p className="status">Error getting Images</p>}      
+      </div>
       {/* Refecthing another page */}
-      {isFetchingNextPage && <p className="status">fetching....</p>}
-
-      {/* if Error occurs while fetching */}
-      {isError && <p className="status">Error getting Images</p>}      
-    </div>
+      {isFetchingNextPage && <Loading />}
+    </>
     );
 }
 
