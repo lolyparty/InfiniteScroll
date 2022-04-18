@@ -10,9 +10,13 @@ function App() {
 
   const [imageHex, setImageHex] = useState([])  
 
+  //axios instance
+  const instance = axios.create({baseURL:'https://api.pexels.com/v1/'})
+
   useEffect(()=>{
     const colorChange =() => {
       //  if(changeColor){
+        console.log(imageHex)
          document.querySelector('.container').style.background = imageHex[imageHex.length - 1]
         // }
     }
@@ -20,9 +24,6 @@ function App() {
     // getColor()
   },[imageHex])
 
-
-  //axios instance
-  const instance = axios.create({baseURL:'https://api.pexels.com/v1/'})
 
   //Get photos
   const getPhotos = async ({pageParam = 1})=>{
@@ -63,8 +64,6 @@ function App() {
   })
 
 
-
-
     //color change
      //Average color & get dominant color intersection observer
      const getDominantColor = (imageUrl)=>{
@@ -72,7 +71,10 @@ function App() {
         const fac = new FastAverageColor()
       fac.getColorAsync(`${imageUrl}`, { width : 50, height: 50},{algorithm:'dominant'})
       .then((data)=>{
-        setImageHex(prev=>[...prev, data.hex])
+        setImageHex(prev=>{
+          return prev[prev.length - 1] === data.hex ? prev : [data.hex]
+        })
+        
       })
       .catch((error)=>console.log(error))
       }
@@ -82,22 +84,18 @@ function App() {
     var observer = new MutationObserver(function() {
       if (document.contains(document.querySelector('.images'))) {
         fetchNextPageFunction(fetchNextPage, hasNextPage)
-        changeColorOnScroll(getDominantColor, isSuccess)
+        changeColorOnScroll(getDominantColor, hasNextPage)
         
-          // if(!hasNextPage)observer.disconnect() 
+          observer.disconnect() 
        }
    });
    
    observer.observe(document, {attributes: false, childList: true, characterData: false, subtree:true})
-
-
-  
-
   
   return (
     <div className="container">
       <div className='overlay'></div>
-      {isLoading && <div>Loading....</div>}
+      {isLoading && <div className="status">Loading....</div>}
 
       {/* Successful fetching of pictures */}
      {isSuccess && result.data.pages.length >= 1 ? result.data.pages.map((page, id)=> <Fragment key={id}> 
@@ -107,10 +105,10 @@ function App() {
       }
 
       {/* Refecthing another page */}
-      {isFetchingNextPage && <p>fetching....</p>}
+      {isFetchingNextPage && <p className="status">fetching....</p>}
 
       {/* if Error occurs while fetching */}
-      {isError && <p>Error...</p>}      
+      {isError && <p className="status">Error getting Images</p>}      
     </div>
     );
 }

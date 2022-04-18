@@ -2,7 +2,7 @@
  const fetchNextPageFunction = (fetchNextPage, hasNextPage) =>{
     const intersecionAnim = (entries, observer)=>entries.forEach((entry)=>{
     
-        if(entry.isIntersecting && entry.intersectionRatio >= 0.1){
+        if(entry.isIntersecting && entry.intersectionRatio >= 0.7){
           fetchNextPage({cancelRefetch:false})
           // console.log(entry)
         }
@@ -17,7 +17,7 @@
       let options = {
         root: null,
         rootMargin:'0px',
-        threshold:0.2
+        threshold:0.71
       }
     
       observer = new IntersectionObserver(intersecionAnim, options)
