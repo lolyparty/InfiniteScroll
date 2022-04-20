@@ -1,3 +1,6 @@
+# GIF
+![Demo GIF](https://media.giphy.com/media/T1d4sSe3xge59Rjkvr/giphy.gif)
+
 # Getting Started with Create React App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
