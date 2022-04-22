@@ -1,5 +1,5 @@
 # GIF
-![Demo GIF](https://media.giphy.com/media/T1d4sSe3xge59Rjkvr/giphy.gif)
+![Demo GIF](https://media.giphy.com/media/swrauW50yue7GKiETv/giphy.gif)
 
 # Getting Started with Create React App
 
