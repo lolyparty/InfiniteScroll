@@ -23,9 +23,9 @@
 
 .images{
     z-index: 1;
-    width:400px; 
+    width:250px; 
     height:550px; 
-    margin:15px;
+    margin:25px 15px;
 }
 
 .overlay{
@@ -42,7 +42,7 @@
 /* loader */
 .loader_container{
     display: flex;
-    max-width: 20%;
+    max-width: 40%;
     justify-content: space-between;
     margin: 0 auto;
     padding: 15px;
@@ -111,9 +111,17 @@
     }
 }
 
-@media screen and (max-width:450px){
+@media screen and (min-width:350px){
     .images{
-        width:330px;
+        width:300px; 
+        margin:25px 15px;
+    }
+}
+
+@media screen and (min-width:450px){
+    .images{
+        width:400px; 
+        margin:25px 15px;
     }
 }
 
